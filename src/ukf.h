@@ -66,6 +66,10 @@ public:
 
   ///* Sigma point spreading parameter
   double lambda_;
+  
+  float previous_timestamp_;
+  
+  float dt;
 
 
   /**
