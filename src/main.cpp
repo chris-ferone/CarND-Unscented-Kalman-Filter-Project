@@ -29,10 +29,10 @@ std::string hasData(std::string s) {
 int main()
 {
   uWS::Hub h;
-
+  cout << "before createa kalman filter instance" << endl;
   // Create a Kalman Filter instance
   UKF ukf;
-
+  
   // used to compute the RMSE later
   Tools tools;
   vector<VectorXd> estimations;
@@ -106,6 +106,7 @@ int main()
     	  ground_truth.push_back(gt_values);
           
           //Call ProcessMeasurment(meas_package) for Kalman filter
+		  cout << "before process measurement call" << endl;
     	  ukf.ProcessMeasurement(meas_package);    	  
 
     	  //Push the current estimated x,y positon from the Kalman filter's state vector
@@ -128,7 +129,7 @@ int main()
     	  estimations.push_back(estimate);
 
     	  VectorXd RMSE = tools.CalculateRMSE(estimations, ground_truth);
-
+			cout << "after RMSE update" << endl;
           json msgJson;
           msgJson["estimate_x"] = p_x;
           msgJson["estimate_y"] = p_y;
@@ -139,13 +140,14 @@ int main()
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
           // std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
-	  
+		cout << "after asdfsadf" << endl;
         }
       } else {
         
         std::string msg = "42[\"manual\",{}]";
         ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
       }
+	  cout << "after fdsg" << endl;
     }
 
   });
