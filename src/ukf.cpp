@@ -19,15 +19,17 @@ UKF::UKF() {
 
   // initial state vector
   x_ = VectorXd(5);
+  x_.fill(0);
 
   // initial covariance matrix
   P_ = MatrixXd(5, 5);
+  P_ = MatrixXd::Identity(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 30;
+  std_a_ = 0.2;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 30;
+  std_yawdd_ = 0.5;
 
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -106,6 +108,13 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   
    if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
 	   cout << "before radar prediction" << endl;
+	   //Initalize x_
+	    float rho = meas_package.raw_measurements_(0);
+		float phi = meas_package.raw_measurements_(1);
+		float rhodot = meas_package.raw_measurements_(2);
+		x_(0) = rho / sqrt(1 + pow(tan(phi),2));
+		x_(1) = x_(0) * tan(phi);
+	   
 	   Prediction(dt);
 	   cout << "before radar update" << endl;
 	   UpdateRadar(meas_package);
@@ -114,6 +123,10 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
    }
    else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
 	   cout << "before lidar prediction" << endl;
+	   //Initalize x_
+	   x_(0) = meas_package.raw_measurements_(0);
+	   x_(1) = meas_package.raw_measurements_(1);
+	   
 	   Prediction(dt);
 	   cout << "before lidar update" << endl;
 	   UpdateLidar(meas_package);
