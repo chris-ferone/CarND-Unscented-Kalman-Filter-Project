@@ -73,6 +73,8 @@ public:
   
   bool initialized;
   
+  int n_sig_;
+  
  
   
 
