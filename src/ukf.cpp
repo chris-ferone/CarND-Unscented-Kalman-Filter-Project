@@ -53,23 +53,20 @@ UKF::UKF() {
 
   Hint: one or more values initialized above might be wildly off...
   */
-  
-
-  
+    
   //* State dimension
   n_x_ = 5;
 
   //* Augmented state dimension
   n_aug_ = 7;
   
-  		//create matrix with predicted sigma points as columns
+  //create matrix with predicted sigma points as columns
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
   
   //* Sigma point spreading parameter
   lambda_ = 3 - n_aug_;
   
   //* Weights of sigma points
-  
   weights_ = VectorXd(2*n_aug_+1);
   
   double weight_0 = lambda_/(lambda_+n_aug_);
@@ -82,6 +79,8 @@ UKF::UKF() {
   previous_timestamp_ = 0;
   
   dt = 0;
+  
+  initialized = false;
  
   
 }
@@ -108,29 +107,35 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   dt =  (meas_package.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
   previous_timestamp_ = meas_package.timestamp_;
 	}
-  
-   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
-	   //Initalize x_
-	    float rho = meas_package.raw_measurements_(0);
+	
+	//Initalize x_	
+	if (!initialized)
+	{
+	if (meas_package.sensor_type_ == MeasurementPackage::RADAR)
+	   {
+		float rho = meas_package.raw_measurements_(0);
 		float phi = meas_package.raw_measurements_(1);
 		float rhodot = meas_package.raw_measurements_(2);
 		x_(0) = rho / sqrt(1 + pow(tan(phi),2));
 		x_(1) = x_(0) * tan(phi);
-	   
-	   Prediction(dt);
-	   UpdateRadar(meas_package);
-
-	   
-   }
-   else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
-	   //Initalize x_
+		initialized = true;
+	   }
+	else if (meas_package.sensor_type_ == MeasurementPackage::LASER)
+	   {
 	   x_(0) = meas_package.raw_measurements_(0);
 	   x_(1) = meas_package.raw_measurements_(1);
-	   
-	   Prediction(dt);
-	   UpdateLidar(meas_package);
+	   initialized = true;
+	   }
+	}
 
-	   
+  
+   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {   
+	   Prediction(dt);
+	   UpdateRadar(meas_package);	   
+   }
+   else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
+	   Prediction(dt);
+	   UpdateLidar(meas_package);   
    }
 }
 

@@ -71,6 +71,8 @@ public:
   
   float dt;
   
+  bool initialized;
+  
  
   
 
