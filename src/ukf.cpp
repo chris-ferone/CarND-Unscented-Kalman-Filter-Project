@@ -73,9 +73,9 @@ UKF::UKF() {
   weights_ = VectorXd(2*n_aug_+1);
   
   double weight_0 = lambda_/(lambda_+n_aug_);
-  cout << "34563246" << endl;
+  //cout << "34563246" << endl;
   weights_(0) = weight_0;
-  cout << "tyjgyj" << endl; 
+  //cout << "tyjgyj" << endl; 
   for (int i=1; i<2*n_aug_+1; i++) {  //2n+1 weights
     double weight = 0.5/(n_aug_+lambda_);
     weights_(i) = weight;
@@ -112,7 +112,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	}
   
    if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
-	   cout << "before radar prediction" << endl;
+	  // cout << "before radar prediction" << endl;
 	   //Initalize x_
 	    float rho = meas_package.raw_measurements_(0);
 		float phi = meas_package.raw_measurements_(1);
@@ -121,21 +121,21 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		x_(1) = x_(0) * tan(phi);
 	   
 	   Prediction(dt);
-	   cout << "before radar update" << endl;
+	   //cout << "before radar update" << endl;
 	   UpdateRadar(meas_package);
-	   cout << "after radar update" << endl;
+	   //cout << "after radar update" << endl;
 	   
    }
    else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
-	   cout << "before lidar prediction" << endl;
+	   //cout << "before lidar prediction" << endl;
 	   //Initalize x_
 	   x_(0) = meas_package.raw_measurements_(0);
 	   x_(1) = meas_package.raw_measurements_(1);
 	   
 	   Prediction(dt);
-	   cout << "before lidar update" << endl;
+	   //cout << "before lidar update" << endl;
 	   UpdateLidar(meas_package);
-	   cout << "after lidar update" << endl;
+	   //cout << "after lidar update" << endl;
 	   
    }
 }
@@ -191,7 +191,7 @@ void UKF::Prediction(double delta_t) {
     Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * L.col(i);
   }
   
-  cout << "sigma points created" << endl;
+  //cout << "sigma points created" << endl;
   
   /////////////////////////////////////
   //    Predict Sigma Points  /////////
@@ -211,7 +211,7 @@ void UKF::Prediction(double delta_t) {
 
     //predicted state values
     double px_p, py_p;
-	cout << "1" << endl;
+	//cout << "1" << endl;
     //avoid division by zero
     if (fabs(yawd) > 0.001) {
         px_p = p_x + v/yawd * ( sin (yaw + yawd*delta_t) - sin(yaw));
@@ -221,35 +221,35 @@ void UKF::Prediction(double delta_t) {
         px_p = p_x + v*delta_t*cos(yaw);
         py_p = p_y + v*delta_t*sin(yaw);
     }
-	cout << "2" << endl;
+	//cout << "2" << endl;
     double v_p = v;
     double yaw_p = yaw + yawd*delta_t;
     double yawd_p = yawd;
 	
-	cout << "3" << endl;
+	//cout << "3" << endl;
 	
 	
     //add noise
     px_p = px_p + 0.5*nu_a*delta_t*delta_t * cos(yaw);
     py_p = py_p + 0.5*nu_a*delta_t*delta_t * sin(yaw);
     v_p = v_p + nu_a*delta_t;
-	cout << "4" << endl;
+	//cout << "4" << endl;
     yaw_p = yaw_p + 0.5*nu_yawdd*delta_t*delta_t;
     yawd_p = yawd_p + nu_yawdd*delta_t;
-	cout << "5" << endl;
-	cout << "i:" << i << endl;
-	cout << "px_p" << px_p << endl;
+	//cout << "5" << endl;
+	//cout << "i:" << i << endl;
+	//cout << "px_p" << px_p << endl;
 	
     //write predicted sigma point into right column
     Xsig_pred_(0,i) = px_p;
-	cout << "6" << endl;
+	//cout << "6" << endl;
     Xsig_pred_(1,i) = py_p;
     Xsig_pred_(2,i) = v_p;
     Xsig_pred_(3,i) = yaw_p;
     Xsig_pred_(4,i) = yawd_p;
 	
   }
-	cout << "sigma points predicted" << endl;
+	//cout << "sigma points predicted" << endl;
 	
 	//////////////////////////////////////////////////////
 	////     Predicted State x and Covaraiance P     /////
@@ -297,7 +297,7 @@ void UKF::Prediction(double delta_t) {
 	//cout << " after angle normalization" << endl;
     P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
   }
-  cout << "x and P predicted" << endl;
+  //cout << "x and P predicted" << endl;
 }
 
 
@@ -358,7 +358,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 	//cout << sizeof(H_laser_) << endl;
 	//cout << sizeof(P_) << endl;
 	P_ = (I - K * H_laser_) * P_;
-	cout << " 10" << endl;
+	//cout << " 10" << endl;
   
 	  cout << "x: " << x_ << endl;
   cout << "P: " << P_ << endl;
