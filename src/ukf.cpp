@@ -122,10 +122,10 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		x_(0) = rho / sqrt(1 + pow(tan(phi),2));
 		x_(1) = x_(0) * tan(phi);
 		P_ << .09,0,0,0,0,
-              0,.01,0,0,0,
-              0,0,.01,0,0,
-              0,0,0,1,0, 
-              0,0,0,0,1;   
+              0,.1,0,0,0,
+              0,0,10,0,0,
+              0,0,0,10,0, 
+              0,0,0,0,10;   
 		initialized = true;
 		}
    	   Prediction(dt);
@@ -138,7 +138,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	   x_(1) = meas_package.raw_measurements_(1);
 	   P_ << .03,0,0,0,0,
              0,.03,0,0,0,
-             0,0,10,0,0,
+             0,0,7,0,0,
              0,0,0,10,0, 
              0,0,0,0,10;   
 	   initialized = true;
